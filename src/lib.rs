@@ -39,8 +39,10 @@ impl Hand {
         println!("sorted:{:?}", cards); // [Card(5, 'H'), Card(5, 'D'), Card(4, 'S'), Card(4, 'H'), Card(4, 'D')]
         
         // straight & flush vars
-        // let straight = cards.windows(); //i[0].0 == i[1].0+1
-        // let flush = cards.windows(); // i[0]1 == i[1].1
+        let straight = cards
+            .windows(2)
+            .all(|w| w[0].0 == w[1].0 + 1);
+        let flush = cards.windows(2).all(|w| w[0].1 == w[1].1);
 
         // matching straight & flush combinations
         // straight + flush = StraightFlush
