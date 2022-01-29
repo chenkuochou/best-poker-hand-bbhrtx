@@ -37,32 +37,35 @@ impl Hand {
         // sorting
         cards.sort_by(|x, y| y.cmp(x));
         println!("sorted:{:?}", cards); // [Card(5, 'H'), Card(5, 'D'), Card(4, 'S'), Card(4, 'H'), Card(4, 'D')]
-        
-        // straight & flush vars
-        let straight = cards
-            .windows(2)
-            .all(|w| w[0].0 == w[1].0 + 1);
+                                        // straight & flush vars
+        let straight = cards.windows(2).all(|w| w[0].0 == w[1].0 + 1);
         let flush = cards.windows(2).all(|w| w[0].1 == w[1].1);
 
-        // matching straight & flush combinations
-        // straight + flush = StraightFlush
-        // !(straight || flush) + 4 same cards = FourOfAKind
-        // !(straight || flush) + 2 same card pair = TwoPair
+        // matching
+        match (straight, flush) {
+            (true, true) => StraightFlush(cards[4].0),
+            (_, true) => Flush(cards[0].0, cards[1].0, cards[2].0, cards[3].0, cards[4].0),
+            (true, _) => Straight(match cards[0].0 {
+                14 => 5,
+                c => c,
+            }),
+            _ => HighCard(cards[0].0, cards[1].0, cards[2].0, cards[3].0, cards[4].0),
+        }
 
         // need a parttern for poker patterns, counted and sorted
         // (count, number)
         // eg. full house: [(3, 5), (2, 9)] from ["5H 5S 5D 9S 9D", "5H 5S 5D 8S 8D"]
-        FullHouse(4,7)
     }
 }
 
 pub fn winning_hands<'a>(hands: &[&'a str]) -> Option<Vec<&'a str>> {
     unimplemented!("Out of {:?}, which hand wins?", hands)
-    
-    // hands.iter() 
+
+    // hands.iter()
+
+    // find ways to sort and compare
+    // using .collect or .collect::<Vec>()?
 }
-
-
 
 /* Resources */
 // lifetimes explainer
@@ -72,5 +75,5 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Option<Vec<&'a str>> {
 // map
 // https://doc.rust-lang.org/rust-by-example/error/option_unwrap/map.html?highlight=.map#combinators-map
 //
-// sort_unstable_by 
+// sort_unstable_by
 // https://doc.rust-lang.org/std/primitive.slice.html#method.sort_unstable_by
