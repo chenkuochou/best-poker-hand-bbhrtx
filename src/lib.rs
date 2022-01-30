@@ -45,26 +45,26 @@ impl Hand {
             .filter(|(n, _)| *n != 0)
             .collect::<Vec<_>>();
         count_number.sort_by(|x, y| y.cmp(x));
-        let nc = count_number.as_slice();
-        // println!("nc:{:?}", nc);
+        let cn = count_number.as_slice();
+        // println!("cn:{:?}", cn);
         // [(3, 4), (2, 9)] from [Card(9, 'S'), Card(9, 'D'), Card(4, 'S'), Card(4, 'H'), Card(4, 'D')]
 
         // match patterns & return rank(s)
         let straight = cards.windows(2).all(|w| w[0].0 == w[1].0 + 1);
         let flush = cards.windows(2).all(|w| w[0].1 == w[1].1);
 
-        match (straight, flush, nc[0].0, nc[1].0) {
+        match (straight, flush, cn[0].0, cn[1].0) {
             (true, true, _, _) => StraightFlush(cards[4].0),
-            (_, _, 4, _) => FourOfAKind(nc[0].1, nc[1].1),
-            (_, _, 3, 2) => FullHouse(nc[0].1, nc[1].1),
+            (_, _, 4, _) => FourOfAKind(cn[0].1, cn[1].1),
+            (_, _, 3, 2) => FullHouse(cn[0].1, cn[1].1),
             (_, true, _, _) => Flush(cards[0].0, cards[1].0, cards[2].0, cards[3].0, cards[4].0),
             (true, _, _, _) => Straight(match cards[0].0 {
                 14 => 5,
                 c => c,
             }),
-            (_, _, 3, _) => ThreeOfAKind(nc[0].1, nc[1].1, nc[2].1),
-            (_, _, 2, 2) => TwoPair(nc[0].1, nc[1].1, nc[2].1),
-            (_, _, 2, _) => OnePair(nc[0].1, nc[1].1, nc[2].1, nc[3].1),
+            (_, _, 3, _) => ThreeOfAKind(cn[0].1, cn[1].1, cn[2].1),
+            (_, _, 2, 2) => TwoPair(cn[0].1, cn[1].1, cn[2].1),
+            (_, _, 2, _) => OnePair(cn[0].1, cn[1].1, cn[2].1, cn[3].1),
             _ => HighCard(cards[0].0, cards[1].0, cards[2].0, cards[3].0, cards[4].0),
         }
     }
@@ -73,8 +73,8 @@ impl Hand {
 pub fn winning_hands<'a>(hands: &[&'a str]) -> Option<Vec<&'a str>> {
     unimplemented!("Out of {:?}, which hand wins?", hands)
 
-    // The returned reference 'Option<>' will also be valid for the length of 'hands'
-    // CANNOT return a reference to somethig created inside the function!
+    // The returned referecne 'Option<>' will also be valid for the length of 'hands'
+    // CANNOT return a referecne to somethig created inside the fucntion!
 
     // hands.iter()
     // compare pattern then rank
