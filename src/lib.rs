@@ -1,4 +1,4 @@
-// Cards combination eg. 4D
+// Read cards e.g. Card(5, 'H')
 #[derive(Debug, Ord, Eq, PartialOrd, PartialEq)]
 struct Card(u8, char);
 impl Card {
@@ -17,7 +17,7 @@ impl Card {
     }
 }
 
-// Hands of poker patterns
+// Hands of poker patterns (rules to compare)
 #[derive(Debug, Ord, Eq, PartialOrd, PartialEq)]
 enum Hand {
     HighCard(u8, u8, u8, u8, u8),
@@ -36,44 +36,64 @@ impl Hand {
 
         // sorting
         cards.sort_by(|x, y| y.cmp(x));
-        println!("sorted:{:?}", cards); // [Card(5, 'H'), Card(5, 'D'), Card(4, 'S'), Card(4, 'H'), Card(4, 'D')]
-                                        // straight & flush vars
+        println!("sorted:{:?}", cards);
+        // [Card(5, 'H'), Card(5, 'D'), Card(4, 'S'), Card(4, 'H'), Card(4, 'D')]
+
+        // a sorted parttern (number, count) for each card
+        let mut nc = (1..=14)
+            .map(|n| (n, cards.iter().filter(|i| i.0 == n).count() as u8))
+            .filter(|(_, n)| *n != 0)
+            .collect::<Vec<_>>();
+        nc.sort_by(|x, y| y.cmp(x)); // ISSUES TO SOLVE
+        let nc = nc.as_slice();
+        println!("nc:{:?}", nc);
+        // [(3, 4), (2, 9)] from [Card(9, 'S'), Card(9, 'D'), Card(4, 'S'), Card(4, 'H'), Card(4, 'D')]
+
+        // match patterns & return rank(s)
         let straight = cards.windows(2).all(|w| w[0].0 == w[1].0 + 1);
         let flush = cards.windows(2).all(|w| w[0].1 == w[1].1);
 
-        // matching
-        match (straight, flush) {
-            (true, true) => StraightFlush(cards[4].0),
-            (_, true) => Flush(cards[0].0, cards[1].0, cards[2].0, cards[3].0, cards[4].0),
-            (true, _) => Straight(match cards[0].0 {
+        match (straight, flush, nc[0].0, nc[1].0) {
+            (true, true, _, _) => StraightFlush(cards[4].0),
+            (_, _, 4, _) => FourOfAKind(nc[0].0, nc[1].0),
+            (_, _, 3, 2) => FullHouse(nc[0].0, nc[1].0),
+            (_, true, _, _) => Flush(cards[0].0, cards[1].0, cards[2].0, cards[3].0, cards[4].0),
+            (true, _, _, _) => Straight(match cards[0].0 {
                 14 => 5,
                 c => c,
             }),
+            (_, _, 3, _) => ThreeOfAKind(nc[0].0, nc[1].0, nc[2].0),
+            (_, _, 2, 2) => TwoPair(nc[0].0, nc[1].0, nc[2].0),
+            (_, _, 2, _) => OnePair(nc[0].0, nc[1].0, nc[2].0, nc[3].0),
             _ => HighCard(cards[0].0, cards[1].0, cards[2].0, cards[3].0, cards[4].0),
         }
-
-        // need a parttern for poker patterns, counted and sorted
-        // (count, number)
-        // eg. full house: [(3, 5), (2, 9)] from ["5H 5S 5D 9S 9D", "5H 5S 5D 8S 8D"]
     }
 }
 
 pub fn winning_hands<'a>(hands: &[&'a str]) -> Option<Vec<&'a str>> {
     unimplemented!("Out of {:?}, which hand wins?", hands)
 
-    // hands.iter()
+    // The returned reference 'Option<>' will also be valid for the length of 'hands'
+    // CANNOT return a reference to somethig created inside the function!
 
-    // find ways to sort and compare
-    // using .collect or .collect::<Vec>()?
+    // hands.iter()
+    // compare pattern then rank
 }
 
 /* Resources */
 // lifetimes explainer
-// https://doc.rust-lang.org/reference/lifetime-elision.html
 // https://doc.rust-lang.org/book/ch10-03-lifetime-syntax.html
+// a borrow checker will verify the length of each scope in compile time
+// the smaller lifetime will be still valid"
 //
 // map
 // https://doc.rust-lang.org/rust-by-example/error/option_unwrap/map.html?highlight=.map#combinators-map
 //
 // sort_unstable_by
 // https://doc.rust-lang.org/std/primitive.slice.html#method.sort_unstable_by
+//
+// slice.windows()
+// https://doc.rust-lang.org/std/primitive.slice.html#method.windows
+//
+// as_slice()
+// https://doc.rust-lang.org/std/vec/struct.Vec.html#method.as_slice
