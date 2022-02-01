@@ -139,3 +139,6 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Option<Vec<&'a str>> {
 //
 // Rust poker hand ranker (complex..)
 // https://github.com/pieterdopheide/poker
+//
+// (just found this) Crate poker
+// https://docs.rs/poker/latest/poker/
