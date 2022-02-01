@@ -60,7 +60,9 @@ impl Hand {
 
 
         /* Match patterns by rank */
-        let straight = cards.windows(2).all(|w| w[0].0 == w[1].0 + 1);
+        let straight = cards
+            .windows(2)
+            .all(|w| w[0].0 == w[1].0 + 1 || (w[0].0, w[1].0) == (14, 5));
         let flush = cards.windows(2).all(|w| w[0].1 == w[1].1);
 
         match (straight, flush, nc[0].1, nc[1].1) {
@@ -71,7 +73,7 @@ impl Hand {
             (true, _, _, _) => Straight(match cards[0].0 {
                 14 => 5,
                 c => c,
-            }), // ISSUE?
+            }),
             (_, _, 3, _) => ThreeOfAKind(nc[0].0, nc[1].0, nc[2].0),
             (_, _, 2, 2) => TwoPair(nc[0].0, nc[1].0, nc[2].0),
             (_, _, 2, _) => OnePair(nc[0].0, nc[1].0, nc[2].0, nc[3].0),
