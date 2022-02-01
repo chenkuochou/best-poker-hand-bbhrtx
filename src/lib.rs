@@ -71,7 +71,7 @@ impl Hand {
             (true, _, _, _) => Straight(match cards[0].0 {
                 14 => 5,
                 c => c,
-            }),
+            }), // ISSUE?
             (_, _, 3, _) => ThreeOfAKind(nc[0].0, nc[1].0, nc[2].0),
             (_, _, 2, 2) => TwoPair(nc[0].0, nc[1].0, nc[2].0),
             (_, _, 2, _) => OnePair(nc[0].0, nc[1].0, nc[2].0, nc[3].0),
@@ -109,7 +109,7 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Option<Vec<&'a str>> {
     /* Pull the winner */
     let winner = hands
         .iter()
-        .filter(|h| hands[0].eq(&h))
+        .filter(|h| hands[0].eq(&h)) // ISSUE?
         .map(|h| h.1)
         .collect::<Vec<&'a str>>();
     Some(winner)
