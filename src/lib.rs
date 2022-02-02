@@ -17,7 +17,6 @@ impl Card {
     }
 }
 
-
 /* Hands of poker patterns (rules to compare) */
 #[derive(Debug, Ord, Eq, PartialOrd, PartialEq)]
 enum Hand {
@@ -35,12 +34,10 @@ impl Hand {
     fn new(cards: &mut [Card]) -> Self {
         use Hand::*;
 
-
         /* Sorting */
         cards.sort_by(|x, y| y.cmp(x));
         // println!("sorted:{:?}", cards);
         // [Card(8, 'D'), Card(5, 'H'), Card(4, 'S'), Card(4, 'H'), Card(4, 'C')]
-
 
         /* Sorted parttern (number, count) for each card */
         let mut number_count = (1..=14)
@@ -48,16 +45,13 @@ impl Hand {
             .filter(|(_, count)| *count != 0)
             .collect::<Vec<_>>();
 
-
         number_count.sort_unstable_by(|x, y| (y.1, y.0).cmp(&(x.1, x.0)));
-        // I asked for the above structure 
+        // I asked for the above structure
         // https://stackoverflow.com/questions/70919627/how-to-sort-items-inside-a-vector-in-rust
-
 
         let nc = number_count.as_slice();
         // println!("nc:{:?}", nc);
         // [(4, 3), (8, 1), (5, 1)]
-
 
         /* Match patterns by rank */
         let straight = cards
@@ -89,16 +83,15 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Option<Vec<&'a str>> {
     // println!("original hands:{:?}", hands);
     // ["4S 5H 4C 8D 4H", "4D AH 3S 2D 5C"]
 
-
     /* Feed Hand with Card */
     let mut hands = hands
         .iter()
         .map(|h| {
             let hand = Hand::new(
                 h.split(|c: char| c.is_whitespace())
-                 .map(|c| Card::new(c))
-                 .collect::<Vec<_>>()
-                 .as_mut_slice(),
+                    .map(|c| Card::new(c))
+                    .collect::<Vec<_>>()
+                    .as_mut_slice(),
             );
             (hand, *h)
         })
@@ -106,7 +99,6 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Option<Vec<&'a str>> {
     hands.sort_by(|x, y| y.cmp(x));
     // println!("hands:{:?}", hands);
     // [(ThreeOfAKind(4, 8, 5), "4S 5H 4C 8D 4H"), (HighCard(14, 5, 4, 3, 2), "4D AH 3S 2D 5C")]
-
 
     /* Pull the winner */
     let winner = hands
@@ -117,10 +109,9 @@ pub fn winning_hands<'a>(hands: &[&'a str]) -> Option<Vec<&'a str>> {
     Some(winner)
 }
 
-
 /* To-do */
-// fixing 'test_aces_can_end_a_straight_low' FAILED
-// fixing 'test_a_tie_has_multiple_winners' FAILED
+// fixing 'test_aces_can_end_a_straight_low' Done!
+// fixing 'test_a_tie_has_multiple_winners'
 // redesign Card
 // refactor matching patterns in 'impl Hand'
 
